@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insert-templog
+  namespace: smtrack
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: insert-templog
+  template:
+    metadata:
+      labels:
+        app: insert-templog
+    spec:
+      containers:
+      - name: insert-templog
+        image: siamatic/insert-templog:latest
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 100m
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: tms-config
+              key: DATABASE_URL
+        - name: RABBITMQ
+          valueFrom:
+            configMapKeyRef:
+              name: rabbitmq-config
+              key: RABBITMQ
+        - name: INFLUXDB_URI
+          valueFrom:
+            configMapKeyRef:
+              name: influxdb-config
+              key: INFLUXDB_URI
+        - name: INFLUXDB_ORG
+          valueFrom:
+            configMapKeyRef:
+              name: influxdb-config
+              key: INFLUXDB_ORG
+        - name: INFLUXDB_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: tms-config
+              key: INFLUXDB_BUCKET
+        - name: INFLUXDB_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: influxdb-config
+              key: INFLUXDB_TOKEN
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: tms-config
+              key: NODE_ENV

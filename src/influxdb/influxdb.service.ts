@@ -4,7 +4,7 @@ import { InfluxDB, Point, WriteApi } from '@influxdata/influxdb-client';
 @Injectable()
 export class InfluxdbService implements OnModuleInit {
   private readonly org = process.env.INFLUXDB_ORG;
-  private readonly bucket = process.env.INFLUXDB_BUCKET;
+  private readonly bucket = process.env.INFLUXDB_BUCKET || 'smtrack-templog';
   private writeApi: WriteApi;
 
   constructor(@Inject('INFLUXDB') private readonly influxDB: InfluxDB) {}

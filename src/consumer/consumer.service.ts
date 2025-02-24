@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
-import { InfluxdbService } from './influxdb/influxdb.service';
-import { CreateTemplogDto } from './dto/insert.dto';
-import { dateFormat } from './utils/date-format';
-import { FirebaseService } from './firebase/firebase.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { InfluxdbService } from '../influxdb/influxdb.service';
+import { FirebaseService } from '../firebase/firebase.service';
+import { CreateTemplogDto } from '../dto/insert.dto';
 
 @Injectable()
-export class AppService {
+export class ConsumerService {
   constructor(
-    private readonly prisma: PrismaService, 
+    private readonly prisma: PrismaService,
     private readonly influxdb: InfluxdbService,
     private readonly firebase: FirebaseService
   ) {}
   async createTemplog(message: CreateTemplogDto) {
-    message.createdAt = dateFormat(new Date());
-    message.updatedAt = dateFormat(new Date());
-    const log = await this.prisma.tempLogs.create({ data: message, include: { device: true } });
-    const tags = { sn: message.mcuId };
+    const log = await this.prisma.tempLogs.create({
+      data: message,
+      include: { device: true }
+    });
+    const tags = { sn: message.mcuId, probe: message.probe };
     if (message.isAlert) {
       const fields = { message: message.message };
       await this.influxdb.writeData('templog-alert', fields, tags);
