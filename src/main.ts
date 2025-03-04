@@ -8,7 +8,7 @@ async function bootstrap() {
   const microservice = await NestFactory.createMicroservice<MicroserviceOptions>(ConsumerModule, {
     transport: Transport.RMQ,
     options: {
-      urls: [process.env.RABBITMQ || 'amqp://admin:thanesmail1234@siamatic.co.th:5672'],
+      urls: [process.env.RABBITMQ],
       queue: 'templog_queue',
       queueOptions: { durable: true },
       noAck: false,
