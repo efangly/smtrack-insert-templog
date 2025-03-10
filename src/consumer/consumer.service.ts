@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from '../prisma/prisma.service';
 import { InfluxdbService } from '../influxdb/influxdb.service';
 import { FirebaseService } from '../firebase/firebase.service';
@@ -8,6 +9,7 @@ import { SocketService } from '../socket/socket.service';
 @Injectable()
 export class ConsumerService {
   constructor(
+    @Inject('RABBITMQ_SERVICE') private readonly client: ClientProxy,
     private readonly prisma: PrismaService,
     private readonly influxdb: InfluxdbService,
     private readonly firebase: FirebaseService,
@@ -15,6 +17,20 @@ export class ConsumerService {
   ) {}
   async createTemplog(message: CreateTemplogDto) {
     const log = await this.prisma.tempLogs.create({ data: message, include: { device: true } });
+    this.client.emit('templog-backup', {
+      id: log.id,
+      mcuId: log.mcuId,
+      internet: log.internet,
+      door: log.door,
+      plugin: log.plugin,
+      tempValue: log.tempValue,
+      realValue: log.realValue,
+      date: log.date,
+      time: log.time,
+      isAlert: log.isAlert,
+      message: log.message,
+      probe: log.probe
+    });
     const tags = { sn: message.mcuId, probe: message.probe };
     if (message.isAlert) {
       const fields = { message: message.message };
