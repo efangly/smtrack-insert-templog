@@ -17,7 +17,7 @@ export class ConsumerController {
       await this.consumerService.createTemplog(data);
       channel.ack(message);
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(error, data.mcuId);
       channel.nack(message, false, false);
     }
   }

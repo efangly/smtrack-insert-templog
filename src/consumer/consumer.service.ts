@@ -31,11 +31,10 @@ export class ConsumerService {
       message: log.message,
       probe: log.probe
     });
-    const tags = { sn: message.mcuId, probe: message.probe };
+    const tags = { sn: message.mcuId, probe: message.probe, hospital: log.device.hospital, ward: log.device.ward };
     if (message.isAlert) {
       const fields = { message: message.message };
       await this.influxdb.writeData('templog-alert', fields, tags);
-      await this.firebase.pushNotification('admin', log.device.name, message.message);
       this.socket.emit('send_message', {
         device: log.device.name,
         message: log.message,
@@ -43,6 +42,14 @@ export class ConsumerService {
         wardName: log.device.ward,
         time: log.createdAt.toString()
       });
+      if (log.device.hospital === 'HID-DEVELOPMENT') {
+        await this.firebase.pushNotification('admin', log.device.name, message.message);
+      } else {
+        await this.firebase.pushNotification('admin', log.device.name, log.message);
+        await this.firebase.pushNotification('service', log.device.name, log.message);
+        await this.firebase.pushNotification(log.device.ward, log.device.name, log.message);
+        await this.firebase.pushNotification(log.device.hospital, log.device.name, log.message);
+      }
     } else {
       const fields = {
         temp: message.tempValue,

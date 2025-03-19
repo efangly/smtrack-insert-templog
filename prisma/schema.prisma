@@ -1,11 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -15,20 +9,22 @@ datasource db {
 }
 
 model Devices {
-  id        String     @id @default(uuid())
-  ward      String
-  hospital  String
-  sn        String     @unique
-  seq       Int        @unique
-  name      String
-  maxTemp   Float      @default(0)
-  minTemp   Float      @default(0)
-  adjTemp   Float      @default(0)
-  record    Int        @default(0)
-  token     String
-  log       TempLogs[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now()) @updatedAt
+  id           String     @id @default(uuid())
+  ward         String
+  hospital     String
+  sn           String     @unique
+  seq          Int        @unique
+  name         String
+  maxTemp      Float      @default(0)
+  minTemp      Float      @default(0)
+  adjTemp      Float      @default(0)
+  record       Int        @default(0)
+  token        String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+  hospitalName String?
+  wardName     String?
+  log          TempLogs[]
 }
 
 model TempLogs {
@@ -43,8 +39,8 @@ model TempLogs {
   time      String?
   isAlert   Boolean  @default(false)
   message   String?
-  probe     String?
-  device    Devices  @relation(fields: [mcuId], references: [sn])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  probe     String?
+  device    Devices  @relation(fields: [mcuId], references: [sn])
 }
