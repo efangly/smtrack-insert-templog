@@ -17,7 +17,7 @@ spec:
         kubernetes.io/hostname: siamatic
       containers:
       - name: insert-templog
-        image: siamatic/insert-templog:latest
+        image: siamatic/insert-templog:1.0.1
         readinessProbe:
           httpGet:
             path: /health

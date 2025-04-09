@@ -43,10 +43,10 @@ export class ConsumerService {
         time: log.createdAt.toString()
       });
       if (log.device.hospital === 'HID-DEVELOPMENT') {
-        await this.firebase.pushNotification('admin', log.device.name, message.message);
+        await this.firebase.pushNotification('admin-legacy', log.device.name, message.message);
       } else {
-        await this.firebase.pushNotification('admin', log.device.name, log.message);
-        await this.firebase.pushNotification('service', log.device.name, log.message);
+        await this.firebase.pushNotification('admin-legacy', log.device.name, log.message);
+        await this.firebase.pushNotification('service-legacy', log.device.name, log.message);
         await this.firebase.pushNotification(log.device.ward, log.device.name, log.message);
         await this.firebase.pushNotification(log.device.hospital, log.device.name, log.message);
       }
