@@ -15,6 +15,7 @@ export class ConsumerService {
     private readonly firebase: FirebaseService,
     private readonly socket: SocketService
   ) {}
+
   async createTemplog(message: CreateTemplogDto) {
     const log = await this.prisma.tempLogs.create({ data: message, include: { device: true } });
     this.client.emit('templog-backup', {
@@ -59,5 +60,19 @@ export class ConsumerService {
       };
       await this.influxdb.writeData('templog', fields, tags);
     }
+  }
+
+  async updateHospital(data: { id: string, name: string }) {
+    await this.prisma.devices.updateMany({
+      where: { hospital: data.id },
+      data: { hospitalName: data.name }
+    });
+  }
+
+  async updateWard(data: { id: string, name: string }) {
+    await this.prisma.devices.updateMany({
+      where: { ward: data.id },
+      data: { wardName: data.name }
+    });
   }
 }
