@@ -10,7 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: siamatic/insert-templog:1.0.4
+      IMAGE_NAME: siamatic/insert-templog:1.0.5
     steps:
     - uses: actions/checkout@v4
     - name: Create service account key file

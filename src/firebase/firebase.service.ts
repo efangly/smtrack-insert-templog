@@ -1,12 +1,13 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { FCM_LEGACY, FCM_NEW } from './firebase.providers';
 import { App } from 'firebase-admin/app';
 import { getMessaging, Message } from "firebase-admin/messaging";
+import { JsonLogger } from '../logger';
 
 @Injectable()
 export class FirebaseService {
   constructor(@Inject(FCM_LEGACY) private readonly legacyApp: App, @Inject(FCM_NEW) private readonly newApp: App) {}
-  private readonly logger = new Logger(FirebaseService.name);
+  private readonly logger = JsonLogger.create('FirebaseService');
 
   async pushNotification(topic: string, title: string, detail: string) {
     try {
@@ -35,7 +36,12 @@ export class FirebaseService {
       await getMessaging(this.legacyApp).send(message);
       await getMessaging(this.newApp).send(message);
     } catch (error) {
-      this.logger.error(error);
+      this.logger.logError(
+        'Failed to send push notification',
+        error as Error,
+        'FirebaseService.pushNotification',
+        { topic, title, detail }
+      );
       throw error;
     }
   };
