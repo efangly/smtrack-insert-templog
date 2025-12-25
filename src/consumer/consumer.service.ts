@@ -32,7 +32,7 @@ export class ConsumerService {
       message: log.message,
       probe: log.probe
     });
-    const tags = { sn: message.mcuId, probe: message.probe, hospital: log.device.hospital, ward: log.device.ward };
+    const tags = { sn: log.device.serial || 'unknown', probe: message.probe, hospital: log.device.hospital, ward: log.device.ward };
     if (message.isAlert) {
       const fields = { message: message.message };
       await this.influxdb.writeData('templog-alert', fields, tags);
