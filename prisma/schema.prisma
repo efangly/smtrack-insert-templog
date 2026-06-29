@@ -36,6 +36,7 @@ model TempLogs {
   plugin    Boolean  @default(false)
   tempValue Float    @default(0)
   realValue Float    @default(0)
+  humidity  Float?
   date      String?
   time      String?
   isAlert   Boolean  @default(false)
